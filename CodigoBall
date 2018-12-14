@@ -1,0 +1,116 @@
+import UIKit
+
+public func Solution (_ A : inout [[Int]], _ k : Int) -> Int {
+var A=[0][0];
+var b=[0];
+var r=[0];
+var k=Int();
+    
+    /**
+     * computes the number of balls to make it into this square
+     */
+    Void calc(Int x, Int y) {
+        Int; left = 0; // balls from left
+        Int; top = 0; // balls from top
+        
+        if (x == 0 && y == 0) {
+            // top, left
+            top = k;
+        }
+        
+        if (x > 0) {
+            // count balls coming from the left
+            Int; t = r[x-1] + b[x-1];
+            switch (A[y][x-1]) {
+            case -1:
+                // cell to the left goes down first
+                left = t / 2;
+                break;
+            case 0:
+                // cell to the left passes through
+                left = r[x-1];
+                break;
+            case 1:
+                // cell to the left goes right first
+                left = (t + 1) / 2;
+                break;
+            }
+        }
+        
+        if (y > 0) {
+            // count balls coming from the top
+            Int; t = r[x] + b[x];
+            switch (A[y-1][x]) {
+            case -1:
+                // cell above goes down first
+                top = (t + 1) / 2;
+                break;
+            case 0:
+                // cell above passes through
+                top = b[x];
+                break;
+            case 1:
+                // cell above goes right first
+                top = t / 2;
+                break;
+            }
+        }
+        
+        // store results
+        b[x] = top;
+        r[x] = left;
+    }
+    
+    
+    /**
+     * -1 => ball leaves through the bottom
+     * +1 => ball leaves through the right
+     */
+    Int ball_switch_board(Int[][] A, Int k) {
+        this.A = A;
+        this.k = k;
+        
+        Int height = A.length;
+        if (height == 0) {
+            return k;
+        }
+        Int width = A[0].length;
+        
+        this.b = new; Int[width];
+        this.r = new; Int[width];
+        
+        // iterate over each cell
+        for (Int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x ++) {
+                calc(x, y);
+            }
+        }
+        
+        // given the lower-right, determine how many pass down
+        Int; t = b[width-1] + r[width-1];
+        switch (A[height-1][width-1]) {
+        case -1:
+            return (t + 1) / 2;
+        case 0:
+            return b[width-1];
+        case 1:
+            return t / 2;
+        }
+        
+        return 0;
+    }
+}
+
+public class BallSwitchBoard {
+    public static void main(String[] args) {
+    Int[][] A = new Int[2][3];
+    A[0][0] = -1;
+    A[0][1] =  0;
+    A[0][2] = -1;
+    A[1][0] = +1;
+    A[1][1] =  0;
+    A[1][2] =  0;
+    Solution s = new Solution();
+    print(s.ball_switch_board(A, 4));
+    }
+}
